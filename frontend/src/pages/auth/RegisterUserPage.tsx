@@ -12,37 +12,39 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Film } from "lucide-react";
+import { registerSchema } from "@/validators/auth.schema";
+import type { SignupForm, SignupFormKeys } from "@/types/AuthTypes";
 
 export default function Signup() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [form, setForm] = useState<SignupForm>({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const result = registerSchema.safeParse(form);
 
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+    if (!result.success) {
+      const firstError = result.error.issues[0]?.message;
+      toast.error(firstError || "Invalid form details");
       return;
     }
 
-    if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
-    }
+    toast.success("Account created successfully!");
+    navigate("/home");
+  };
 
-    try {
-      toast.success("Account created successfully!");
-      navigate("/home");
-    } catch (error) {
-      console.log("signup error", error);
-      toast.error("Signup failed. Please try again.");
-    }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.id]: e.target.value });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-accent/20 p-4">
+    <div className="min-h-screen flex items-center justify-center from-primary/20 via-background to-accent/20 p-4">
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="space-y-3 text-center">
           <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
@@ -55,39 +57,36 @@ export default function Signup() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="••••••••"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
+            {(
+              [
+                "name",
+                "email",
+                "password",
+                "confirmPassword",
+              ] as SignupFormKeys[]
+            ).map((field) => (
+              <div key={field} className="space-y-2">
+                <Label htmlFor={field}>
+                  {field === "confirmPassword"
+                    ? "Confirm Password"
+                    : field.charAt(0).toUpperCase() + field.slice(1)}
+                </Label>
+                <Input
+                  id={field}
+                  type={field.includes("password") ? "password" : field}
+                  placeholder={
+                    field === "email"
+                      ? "you@example.com"
+                      : field === "name"
+                      ? "Your name"
+                      : "••••••••"
+                  }
+                  value={form[field]}
+                  onChange={handleChange}
+                />
+              </div>
+            ))}
+
             <Button
               type="submit"
               className="w-full bg-primary hover:bg-primary/90"
@@ -95,6 +94,7 @@ export default function Signup() {
               Create Account
             </Button>
           </form>
+
           <div className="mt-6 text-center text-sm">
             <span className="text-muted-foreground">
               Already have an account?{" "}
