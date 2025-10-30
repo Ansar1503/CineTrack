@@ -1,8 +1,14 @@
-export type SignupForm = {
+export interface SignupForm {
   name: string;
   email: string;
   password: string;
   confirmPassword: string;
-};
+}
 
-export type SignupFormKeys = "confirmPassword" | "name" | "email" | "password";
+export interface LoginForm {
+  email: string;
+  password: string;
+}
+
+export type SignupFormKeys = keyof SignupForm;
+export type LoginFormKeys = keyof LoginForm;

@@ -10,8 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { toast } from "sonner";
-import { Film } from "lucide-react";
 import { registerSchema } from "@/validators/auth.schema";
 import type { SignupForm, SignupFormKeys } from "@/types/AuthTypes";
 
@@ -23,21 +21,11 @@ export default function Signup() {
     confirmPassword: "",
   });
 
+  const [errors, setErrors] = useState<Partial<Record<SignupFormKeys, string>>>(
+    {}
+  );
+
   const navigate = useNavigate();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const result = registerSchema.safeParse(form);
-
-    if (!result.success) {
-      const firstError = result.error.issues[0]?.message;
-      toast.error(firstError || "Invalid form details");
-      return;
-    }
-
-    toast.success("Account created successfully!");
-    navigate("/home");
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -47,27 +35,41 @@ export default function Signup() {
 
     const result = registerSchema.safeParse(updatedForm);
     if (!result.success) {
-      const errorForField = result.error.issues.find(
-        (issue) => issue.path[0] === id
-      );
-      if (errorForField) {
-        toast.error(errorForField.message);
-      }
+      const fieldError = result.error.issues.find((i) => i.path[0] === id);
+      setErrors((prev) => ({
+        ...prev,
+        [id]: fieldError?.message,
+      }));
+    } else {
+      setErrors((prev) => ({ ...prev, [id]: "" }));
     }
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = registerSchema.safeParse(form);
+
+    if (!result.success) {
+      const formErrors: Partial<Record<SignupFormKeys, string>> = {};
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as SignupFormKeys;
+        formErrors[field] = issue.message;
+      });
+      setErrors(formErrors);
+      return;
+    }
+
+    navigate("/home");
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center from-primary/20 via-background to-accent/20 p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="space-y-3 text-center">
-          <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center">
-            <Film className="h-8 w-8 text-primary-foreground" />
-          </div>
           <CardTitle className="text-3xl font-bold">Create Account</CardTitle>
-          <CardDescription>
-            Start tracking your favorite movies & TV shows
-          </CardDescription>
+          <CardDescription>Start tracking movies & shows</CardDescription>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {(
@@ -78,7 +80,7 @@ export default function Signup() {
                 "confirmPassword",
               ] as SignupFormKeys[]
             ).map((field) => (
-              <div key={field} className="space-y-2">
+              <div key={field} className="space-y-1">
                 <Label htmlFor={field}>
                   {field === "confirmPassword"
                     ? "Confirm Password"
@@ -87,38 +89,27 @@ export default function Signup() {
                 <Input
                   id={field}
                   type={field.includes("password") ? "password" : field}
-                  placeholder={
-                    field === "email"
-                      ? "you@example.com"
-                      : field === "name"
-                      ? "Your name"
-                      : "••••••••"
-                  }
+                  placeholder={field}
                   value={form[field]}
                   onChange={handleChange}
                 />
+                {errors[field] && (
+                  <p className="text-red-500 text-xs">{errors[field]}</p>
+                )}
               </div>
             ))}
 
-            <Button
-              type="submit"
-              className="w-full bg-primary hover:bg-primary/90"
-            >
+            <Button className="w-full" type="submit">
               Create Account
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm">
-            <span className="text-muted-foreground">
-              Already have an account?{" "}
-            </span>
-            <Link
-              to="/login"
-              className="text-primary hover:underline font-medium"
-            >
+          <p className="mt-4 text-sm text-center">
+            Already have an account?{" "}
+            <Link className="text-primary" to="/">
               Sign in
             </Link>
-          </div>
+          </p>
         </CardContent>
       </Card>
     </div>
