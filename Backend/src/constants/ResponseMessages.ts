@@ -12,6 +12,7 @@ export const ERROR_MESSAGES = {
 };
 
 export const SUCCESS_MESSAGES = {
+  USER_LOGOUT: "Logout successful",
   ENTRY_CREATED: "Entry created Successfully",
   USER_REGISTERED: "User registered successfully",
   USER_LOGGED_IN: "Login successful",
