@@ -40,7 +40,20 @@ export default function Signup() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+    const updatedForm = { ...form, [id]: value };
+
+    setForm(updatedForm);
+
+    const result = registerSchema.safeParse(updatedForm);
+    if (!result.success) {
+      const errorForField = result.error.issues.find(
+        (issue) => issue.path[0] === id
+      );
+      if (errorForField) {
+        toast.error(errorForField.message);
+      }
+    }
   };
 
   return (
