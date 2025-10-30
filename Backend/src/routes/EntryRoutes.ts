@@ -5,6 +5,6 @@ import { authMiddleware } from "@src/middlewares/auth.middleware";
 
 const route = Router();
 
-route.post(ROUTES.ENTRY.CREATE, createEntry);
+route.post(ROUTES.ENTRY.CREATE, authMiddleware, createEntry);
 
 export default route;
