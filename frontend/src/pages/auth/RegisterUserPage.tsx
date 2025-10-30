@@ -12,6 +12,9 @@ import {
 } from "@/components/ui/card";
 import { registerSchema } from "@/validators/auth.schema";
 import type { SignupForm, SignupFormKeys } from "@/types/AuthTypes";
+import { useAppDispatch } from "@/store/hook";
+import { AuthService } from "@/services/AuthServices";
+import { setCredentials } from "@/store/AuthSlice";
 
 export default function Signup() {
   const [form, setForm] = useState<SignupForm>({
@@ -24,6 +27,7 @@ export default function Signup() {
   const [errors, setErrors] = useState<Partial<Record<SignupFormKeys, string>>>(
     {}
   );
+  const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
 
@@ -45,7 +49,7 @@ export default function Signup() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = registerSchema.safeParse(form);
 
@@ -57,6 +61,19 @@ export default function Signup() {
       });
       setErrors(formErrors);
       return;
+    }
+
+    try {
+      const data = await AuthService.register(form);
+
+      dispatch(
+        setCredentials({
+          user: data.user,
+          token: data.accessToken,
+        })
+      );
+    } catch (error) {
+      console.log("register failed", error);
     }
 
     navigate("/home");
