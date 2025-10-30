@@ -55,7 +55,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/15 via-background to-accent/15 p-4">
+    <div className="min-h-screen flex items-center justify-center from-primary/15 via-background to-accent/15 p-4">
       <Card className="w-full max-w-md shadow-2xl border border-border/80 rounded-2xl backdrop-blur-md">
         <CardHeader className="text-center space-y-3">
           <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30">
