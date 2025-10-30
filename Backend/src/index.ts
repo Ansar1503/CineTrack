@@ -3,6 +3,7 @@ import cors from "cors";
 import "dotenv/config";
 import cookieParser from "cookie-parser";
 import EntryRoutes from "./routes/EntryRoutes";
+import AuthRoutes from "./routes/AuthRoutes";
 import { ROUTES } from "./constants/RouteConstants";
 import { errorHandler } from "./middlewares/error.middleware";
 
@@ -17,7 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(ROUTES.ENTRY.BASE, EntryRoutes);
-app.use(ROUTES.AUTH.BASE),
+app.use(ROUTES.AUTH.BASE, AuthRoutes);
 app.use(errorHandler);
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () =>
