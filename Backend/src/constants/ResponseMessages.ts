@@ -1,4 +1,6 @@
 export const ERROR_MESSAGES = {
+  EMAIL_ALREADY_EXISTS: "Email already registered",
+  INVALID_CREDENTIALS: "Invalid credentials",
   JWT_ACCESS_SECRET_NOT_FOUND: "Invalid Jwt Access Secret",
   JWT_REFRESH_SECRET_NOT_FOUND: "Invalid Jwt Refresh Secret",
   JWT_EMAIL_SECRET_NOT_FOUND: "Invalid Jwt Email Secret",
@@ -10,4 +12,6 @@ export const ERROR_MESSAGES = {
 
 export const SUCCESS_MESSAGES = {
   ENTRY_CREATED: "Entry created Successfully",
+  USER_REGISTERED: "User registered successfully",
+  USER_LOGGED_IN: "Login successful",
 };

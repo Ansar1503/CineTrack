@@ -17,6 +17,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(ROUTES.ENTRY.BASE, EntryRoutes);
+app.use(ROUTES.AUTH.BASE),
 app.use(errorHandler);
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () =>
