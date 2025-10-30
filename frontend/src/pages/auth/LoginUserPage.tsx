@@ -16,6 +16,7 @@ import type {
   LoginFormKeys,
   SignupFormKeys,
 } from "@/types/AuthTypes";
+import { Film } from "lucide-react";
 
 export default function Login() {
   const [form, setForm] = useState<LoginForm>({ email: "", password: "" });
@@ -54,23 +55,35 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/15 via-background to-accent/15 p-4">
+      <Card className="w-full max-w-md shadow-2xl border border-border/80 rounded-2xl backdrop-blur-md">
+        <CardHeader className="text-center space-y-3">
+          <div className="mx-auto w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30">
+            <Film className="h-8 w-8 text-primary-foreground" />
+          </div>
+
           <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
-          <CardDescription>Login to continue</CardDescription>
+          <CardDescription className="text-muted-foreground">
+            Login to continue
+          </CardDescription>
         </CardHeader>
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {(["email", "password"] as LoginFormKeys[]).map((field) => (
-              <div key={field} className="space-y-1">
-                <Label htmlFor={field}>{field.toUpperCase()}</Label>
+              <div key={field} className="space-y-2">
+                <Label htmlFor={field} className="text-sm font-medium">
+                  {field.toUpperCase()}
+                </Label>
                 <Input
                   id={field}
                   type={field === "password" ? "password" : "email"}
                   value={form[field]}
                   onChange={handleChange}
+                  placeholder={
+                    field === "password" ? "••••••••" : "you@example.com"
+                  }
+                  className="focus:ring-2 focus:ring-primary/50 focus:border-primary"
                 />
                 {errors[field] && (
                   <p className="text-red-500 text-xs">{errors[field]}</p>
@@ -78,14 +91,21 @@ export default function Login() {
               </div>
             ))}
 
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              variant="default"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+            >
               Login
             </Button>
           </form>
 
-          <p className="mt-4 text-sm text-center">
+          <p className="mt-6 text-sm text-center text-muted-foreground">
             Don't have an account?{" "}
-            <Link className="text-primary" to="/signup">
+            <Link
+              className="text-primary hover:underline font-medium"
+              to="/signup"
+            >
               Signup
             </Link>
           </p>
